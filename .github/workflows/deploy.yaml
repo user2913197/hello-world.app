@@ -1,0 +1,63 @@
+name: Build and Deploy to ROSA
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build Angular app
+      run: npm run build --prod
+
+    - name: Debug secret value
+      run: |
+        if [ -n "${{ secrets.GHCR_PAT }}" ]; then
+          echo "Secret is: Present"
+        else
+          echo "Secret is: Not Present"
+        fi
+
+
+    - name: Log in to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: revathibala
+        password: ${{ secrets.GHCR_PAT1 }}
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t ghcr.io/revathibala/hello-world-app:latest .
+        docker push ghcr.io/revathibala/hello-world-app:latest
+
+    
+    - name: Install OpenShift CLI
+      run: |
+        curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz
+        tar -xzf openshift-client-linux.tar.gz
+        sudo mv oc /usr/local/bin
+
+    - name: Login to OpenShift
+      run: |
+        oc login --token=${{ secrets.ROSA_TOKEN }} --server=${{ secrets.ROSA_SERVER }}
+
+    - name: Deploy to ROSA
+      run: |
+        oc delete -f deployment.yaml
+        oc apply -f deployment.yaml
+        

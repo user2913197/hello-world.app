@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-app-deployment
+  labels:
+    app: hello-world-app
+spec:
+  replicas: 1  
+  selector:
+    matchLabels:
+      app: hello-world-app
+  template:
+    metadata:
+      labels:
+        app: hello-world-app
+    spec:
+      containers:
+      - name: hello-world-app
+        image: ghcr.io/revathibala/hello-world-app:latest  
+        ports:
+        - containerPort: 80  
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-app-service
+spec:
+  selector:
+    app: hello-world-app
+  ports:
+    - protocol: TCP
+      port: 80     
+      targetPort: 80  
+  type: ClusterIP  
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: hello-world-app-route
+spec:
+  to:
+    kind: Service
+    name: hello-world-app-service
+  port:
+    targetPort: 80
+  tls:
+    termination: edge  
