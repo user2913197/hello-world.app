@@ -37,7 +37,7 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: revathibala
+        username: user2913197
         password: ${{ secrets.GHCR_PAT1 }}
 
     - name: Build and push Docker image
