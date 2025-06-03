@@ -26,7 +26,7 @@ jobs:
 
     - name: Debug secret value
       run: |
-        if [ -n "${{ secrets.GHCR_PAT }}" ]; then
+        if [ -n "${{ secrets.SAT_PAT }}" ]; then
           echo "Secret is: Present"
         else
           echo "Secret is: Not Present"
@@ -39,7 +39,7 @@ jobs:
         registry: ghcr.io
 <<<<<<< HEAD
         username: ${{ github.actor }}
-        password: ${{ secrets.GHCR_PAT1 }}
+        password: ${{ secrets.SAT_PAT }}
 
     - name: Build and push Docker image
       run: |
