@@ -43,12 +43,12 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t ghcr.io/revathibala/hello-world-app:${{ github.sha }} .
-        docker push ghcr.io/revathibala/hello-world-app:${{ github.sha }}
+        docker build -t ghcr.io/user2913197/hello-world-app:${{ github.sha }} .
+        docker push ghcr.io/user2913197/hello-world-app:${{ github.sha }}
     
     - name: Update deployment image tag
       run: |
-        sed -i "s|image: ghcr.io/revathibala/hello-world-app:.*|image: ghcr.io/revathibala/hello-world-app:${{ github.sha }}|" k8s/deployment.yaml
+        sed -i "s|image: ghcr.io/user2913197/hello-world-app:.*|image: ghcr.io/user2913197/hello-world-app:${{ github.sha }}|" k8s/deployment.yaml
 =======
         username: user2913197
         password: ${{ secrets.SAT_PAT }}
